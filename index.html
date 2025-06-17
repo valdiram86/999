@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Top Traders dYdX</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f1115;
+      color: #f1f1f1;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #3ecf8e;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #1c1e24;
+    }
+    tr:nth-child(even) {
+      background-color: #1a1c21;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏆 Top 10 Traders – dYdX</h1>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Trader</th>
+        <th>Lucro (PnL)</th>
+        <th>Trades</th>
+        <th>Taxa de Acerto</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function carregarTopTraders() {
+      try {
+        const resposta = await fetch('https://api.dydx.exchange/v3/leaderboard');
+        const dados = await resposta.json();
+        const tabela = document.querySelector("#leaderboard tbody");
+
+        dados.leaderboard.slice(0, 10).forEach(trader => {
+          const linha = document.createElement("tr");
+          linha.innerHTML = `
+            <td>${trader.rank}</td>
+            <td>${trader.username || 'Anônimo'}</td>
+            <td>$${trader.pnl.toLocaleString()}</td>
+            <td>${trader.totalTrades}</td>
+            <td>${(trader.successRate * 100).toFixed(1)}%</td>
+          `;
+          tabela.appendChild(linha);
+        });
+      } catch (erro) {
+        console.error('Erro ao carregar dados da dYdX:', erro);
+      }
+    }
+
+    carregarTopTraders();
+  </script>
+</body>
+</html>
